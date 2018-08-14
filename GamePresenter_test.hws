@@ -1,0 +1,20 @@
+@INCLUDE "GameData.hws"
+@INCLUDE "GamePresenter.hws"
+
+Function TestFormatOfPlayerStatus()
+    Local presenter = GamePresenter:New()
+
+    Assert(presenter:GetPlayerStatus(#PLAYER_WHITE) = "White's Turn")
+    Assert(presenter:GetPlayerStatus(#PLAYER_BLACK) = "Black's Turn")
+EndFunction
+
+Function TestFormatOfPlayerWinStatus()
+    Local presenter = GamePresenter:New()
+
+    Assert(presenter:GetWinStatus(#PLAYER_WHITE) = "White Wins!")
+    Assert(presenter:GetWinStatus(#PLAYER_BLACK) = "Black Wins!")
+EndFunction
+
+TestFormatOfPlayerStatus()
+TestFormatOfPlayerWinStatus()
+

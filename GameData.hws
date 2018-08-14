@@ -1,0 +1,6 @@
+
+Const #PLAYER_WHITE = 1
+Const #PLAYER_BLACK = 2
+Const #PLAYER_EMPTY = 3
+
+

@@ -1,0 +1,64 @@
+
+@INCLUDE "GameData.hws"
+
+Const #BOARDERROR_OK = 0
+Const #BOARDERROR_SPACEOCCUPIED = 1
+Const #BOARDERROR_BADLOCATION = 2
+
+Local Board = {}
+
+Function Board:New(o)
+    o = o Or {
+        placedStones = {},
+        currentPlayer = #PLAYER_WHITE,
+        width = 19,
+        height =19
+    }
+    SetMetaTable(o, self)
+    self.__index = self
+    Return(o)
+EndFunction
+
+Function Board:StonesPlaced()
+    Return(TableItems(self.placedStones))
+EndFunction
+
+Function Board:WhooseTurn()
+    Return(self.currentPlayer)
+EndFunction
+
+Function Board:TakeTurn(col, row)
+    Local err = self:Place(col, row, self.currentPlayer)
+
+    If self.currentPlayer = #PLAYER_WHITE
+        self.currentPlayer = #PLAYER_BLACK
+    Else
+        self.currentPlayer = #PLAYER_WHITE
+    EndIf
+
+    Return(err)
+EndFunction
+
+Function Board:Place(col, row, player)
+    If col < 0 Or col >= self.width Then Return(#BOARDERROR_BADLOCATION)
+    If row < 0 Or row >= self.height Then Return(#BOARDERROR_BADLOCATION)
+
+    Local location = self:LocationFor(col, row)
+
+    If HaveItem(self.placedStones, location) = True
+        Return(#BOARDERROR_SPACEOCCUPIED)
+    EndIf
+    self.placedStones[location] = player
+    Return(#BOARDERROR_OK)
+EndFunction
+
+Function Board:Get(col, row)
+    Local location = self:LocationFor(col, row)
+    If HaveItem(self.placedStones, location) = False Then Return(#PLAYER_EMPTY)
+    Return(self.placedStones[location])
+EndFunction
+
+Function Board:LocationFor(col, row)
+    Return(col.."-"..row)
+EndFunction
+

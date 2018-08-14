@@ -1,0 +1,108 @@
+@INCLUDE "GomokuRules.hws"
+@INCLUDE "GameData.hws"
+@INCLUDE "Board.hws"
+
+Local Rules = Rules:New()
+
+Function TestEmptyBoard_IsNotAWin()
+    DebugPrint("TestEmptyBoard_IsNotAWin")
+
+    Local Board = Board:New()
+
+    Assert(Rules:IsWin(Board, #PLAYER_WHITE) = False)
+EndFunction
+
+Function TestNotEmptyBoardButNotWin_IsNotAWin()
+    DebugPrint("TestNotEmptyBoardButNotWin_IsNotAWin")
+
+    Local Board = Board:New()
+
+    Board:Place(1, 1, #PLAYER_WHITE)
+    Assert(Rules:IsWin(Board, #PLAYER_WHITE) = False)
+EndFunction
+
+Function TestFiveInARowInTheFirstRow_IsAWin()
+    DebugPrint("TestFiveInARowInTheFirstRow_IsAWin")
+
+    Local Board = Board:New()
+    For Local col = 0 To 5-1
+        Board:Place(col, 0, #PLAYER_BLACK)
+    Next
+    Assert(Rules:IsWin(Board, #PLAYER_BLACK) = True)
+EndFunction
+
+Function TestFiveConsecutiveStonesForOtherPlayer_IsALoose()
+    DebugPrint("TestFiveConsecutiveStonesForOtherPlayer_IsALoose")
+
+    Local Board = Board:New()
+    For Local col = 0 To 5-1
+        Board:Place(col, 0, #PLAYER_BLACK)
+    Next
+    Assert(Rules:IsWin(Board, #PLAYER_WHITE) = False)
+EndFunction
+
+Function TestFourInARowInTheFirstRow_IsALoose()
+    DebugPrint("TestFourInARowInTheFirstRow_IsALoose")
+
+    Local Board = Board:New()
+    For Local col = 0 To 4-1
+        Board:Place(col, 0, #PLAYER_BLACK)
+    Next
+    Assert(Rules:IsWin(Board, #PLAYER_BLACK) = False)
+EndFunction
+
+Function TestSixInARowInTheFirstRow_IsAWin()
+    DebugPrint("TestSixInARowInTheFirstRow_IsAWin")
+
+    Local Board = Board:New()
+    For Local col = 0 To 6-1
+        Board:Place(col, 0, #PLAYER_BLACK)
+    Next
+    Assert(Rules:IsWin(Board, #PLAYER_BLACK) = True)
+EndFunction
+
+Function TestFiveConsecutiveInAnyRow_IsAWin()
+    DebugPrint("TestFiveConsecutiveInAnyRow_IsAWin")
+
+    Local Board = Board:New()
+    For Local row = 0 To Board.width-1
+        Board = Board:New()
+        For Local col = 0 To 5-1
+            Board:Place(col, row, #PLAYER_BLACK)
+        Next
+        Assert(Rules:IsWin(Board, #PLAYER_BLACK) = True)
+    Next
+EndFunction
+
+Function TestFiveNonConsecutiveInRow_IsALoose()
+    DebugPrint("TestFiveNonConsecutiveInRow_IsALoose")
+
+    Local Board = Board:New()
+    Board:Place(1, 0, #PLAYER_BLACK)
+    Board:Place(2, 0, #PLAYER_BLACK)
+    Board:Place(3, 0, #PLAYER_BLACK)
+    Board:Place(5, 0, #PLAYER_BLACK)
+    Board:Place(6, 0, #PLAYER_BLACK)
+    Assert(Rules:IsWin(Board, #PLAYER_BLACK) = False)
+EndFunction
+
+Function TestFiveConsecutiveInColumn_IsAWin()
+    DebugPrint("TestFiveConsecutiveInColumn_IsAWin")
+
+    Local Board = Board:New()
+    For Local row = 0 To 5-1
+        Board:Place(0, row, #PLAYER_BLACK)
+    Next
+    Assert(Rules:IsColWin(Board, #PLAYER_BLACK) = True)
+EndFunction
+
+TestEmptyBoard_IsNotAWin()
+TestNotEmptyBoardButNotWin_IsNotAWin()
+TestFiveInARowInTheFirstRow_IsAWin()
+TestFiveConsecutiveStonesForOtherPlayer_IsALoose()
+TestFourInARowInTheFirstRow_IsALoose()
+TestSixInARowInTheFirstRow_IsAWin()
+TestFiveConsecutiveInAnyRow_IsAWin()
+TestFiveNonConsecutiveInRow_IsALoose()
+TestFiveConsecutiveInColumn_IsAWin()
+

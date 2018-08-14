@@ -1,0 +1,23 @@
+@INCLUDE "Board.hws"
+@INCLUDE "GomokuRules.hws"
+
+Local Game = {}
+
+Function Game:New(o)
+    o = o Or {
+        board = Board:New(),
+        rules = Rules:New()
+    }
+    SetMetaTable(o, self)
+    self.__index = self
+    Return(o)
+EndFunction
+
+Function Game:WhooseTurn()
+    Return(self.board:WhooseTurn())
+EndFunction
+
+Function Game:TakeTurn(col, row)
+    Return(self.board:TakeTurn(col, row))
+EndFunction
+

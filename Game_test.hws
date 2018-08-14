@@ -1,0 +1,22 @@
+@INCLUDE "Game.hws"
+
+Function TestWhiteStartsNewGame()
+    Local game = Game:New()
+    Assert(game:WhooseTurn() = #PLAYER_WHITE)
+EndFunction
+
+Function TestAfterTurn_IsOtherPlayersTurn()
+    Local game = Game:New()
+
+    game:TakeTurn(0, 0)
+    Assert(game.board:Get(0,0) = #PLAYER_WHITE)
+    Assert(game:WhooseTurn() = #PLAYER_BLACK)
+
+    game:TakeTurn(1,0)
+    Assert(game.board:Get(1,0) = #PLAYER_BLACK)
+    Assert(game:WhooseTurn() = #PLAYER_WHITE)
+EndFunction
+
+TestWhiteStartsNewGame()
+TestAfterTurn_IsOtherPlayersTurn()
+

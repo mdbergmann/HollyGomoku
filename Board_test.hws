@@ -1,0 +1,80 @@
+@INCLUDE "Board.hws"
+@INCLUDE "GameData.hws"
+
+
+Function TestBoardCreate()
+    Local Board = Board:New()
+    Assert(Board.width = 19)
+    Assert(Board.height = 19)
+EndFunction
+
+Function TestNewBoardHasNoStones()
+    Local Board = Board:New()
+    Assert(Board:StonesPlaced() = 0)
+EndFunction
+
+Function TestCanAddStonesInBounds()
+    Local Board = Board:New()
+    Board:Place(1, 1, #PLAYER_WHITE)
+
+    Assert(Board:StonesPlaced() = 1)
+    Assert(Board:Get(1, 1) = #PLAYER_WHITE)
+
+    Board:Place(Board.width-1, Board.height-1, #PLAYER_BLACK)
+
+    Assert(Board:StonesPlaced() = 2)
+    Assert(Board:Get(Board.width-1, Board.height-1) = #PLAYER_BLACK)
+EndFunction
+
+Function TestKnowsAboutEmptyIntersections()
+    Local Board = Board:New()
+    Assert(Board:Get(0, 1) = #PLAYER_EMPTY)
+    Board:Place(0, 1, #PLAYER_WHITE)
+    Assert(Board:Get(0, 1) = #PLAYER_WHITE)
+    Board:Place(1, 1, #PLAYER_WHITE)
+    Assert(Board:Get(1, 1) = #PLAYER_WHITE)
+EndFunction
+
+Function TestCannotAddToOccupiedIntersection()
+    Local Board = Board:New()
+    Board:Place(0, 1, #PLAYER_WHITE)
+
+    Assert(Board:Place(0, 1, #PLAYER_WHITE) = #BOARDERROR_SPACEOCCUPIED)
+    Assert(Board:Place(0, 1, #PLAYER_BLACK) = #BOARDERROR_SPACEOCCUPIED)
+EndFunction
+
+Function TestCannotPlaceStonesOutsideBounds()
+    Local Board = Board:New()
+
+    Assert(Board:Place(-1, -1, #PLAYER_WHITE) = #BOARDERROR_BADLOCATION)
+    Assert(Board:Place(Board.width, Board.height, #PLAYER_WHITE) = #BOARDERROR_BADLOCATION)
+    Assert(Board:Place(0, -1, #PLAYER_WHITE) = #BOARDERROR_BADLOCATION)
+    Assert(Board:Place(0, Board.height, #PLAYER_WHITE) = #BOARDERROR_BADLOCATION)
+    Assert(Board:Place(-1, 0, #PLAYER_WHITE) = #BOARDERROR_BADLOCATION)
+    Assert(Board:Place(Board.width, 0, #PLAYER_WHITE) = #BOARDERROR_BADLOCATION)
+
+    Assert(Board:StonesPlaced() = 0)
+EndFunction
+
+Function TestAddStonesInSameColButDifferentRow()
+    Local Board = Board:New()
+
+    Assert(Board:Place(1,1,#PLAYER_WHITE) = #BOARDERROR_OK)
+    Assert(Board:Get(1,1) = #PLAYER_WHITE)
+    Assert(Board:Place(1,2,#PLAYER_BLACK) = #BOARDERROR_OK)
+    Assert(Board:Get(1,2) = #PLAYER_BLACK)
+
+    Board = Board:New()
+    Assert(Board:Place(1,1,#PLAYER_WHITE) = #BOARDERROR_OK)
+    Assert(Board:Place(1,2,#PLAYER_BLACK) = #BOARDERROR_OK)
+    Assert(Board:Get(1,1) = #PLAYER_WHITE)
+    Assert(Board:Get(1,2) = #PLAYER_BLACK)
+EndFunction
+
+TestBoardCreate()
+TestNewBoardHasNoStones()
+TestCanAddStonesInBounds()
+TestKnowsAboutEmptyIntersections()
+TestCannotAddToOccupiedIntersection()
+TestCannotPlaceStonesOutsideBounds()
+TestAddStonesInSameColButDifferentRow()

@@ -1,0 +1,107 @@
+
+@APPAUTHOR      "Manfred Bergmann"
+@APPCOPYRIGHT   "Manfred Bergmann 2018"
+@APPTITLE       "Gomoku"
+@APPVERSION     "$VER: 1.0 (12.8.2018)"
+@VERSION        1,0
+@DISPLAY { Title = "Gomoku", Width = 600, Height = 800, Color = #BLUE }
+
+@INCLUDE "Game.hws"
+@INCLUDE "GamePresenter.hws"
+
+;;; "source code"
+Local game = Game:New()
+Local gamePresenter = GamePresenter:New()
+
+Local boardSize = 600
+Local topOffset = 100
+Local cellCount = game.board.width + 1
+Local cellSize = boardSize / cellCount
+DebugPrint("CellSize: ", cellSize)
+
+Local statusText
+
+; paint grid
+Function PaintGrid()
+    SetFillStyle(#FILLCOLOR)
+    ; the top offsetbox to clear the label
+    Box(0, 0, boardSize, topOffset-1, #BLUE)
+    ; the grid box
+    Box(0, topOffset, boardSize, boardSize, $ffdd88)
+
+    ; draw label
+    TextOut(#CENTER, 50, statusText)
+
+    ; drawing vertical lines
+    For i = 1 To cellCount
+        Local xPos = i*cellSize
+        Local yPos1 = cellSize + topOffset
+        Local yPos2 = boardSize - cellSize + topOffset
+        Line(xPos, yPos1, xPos, yPos2)
+    Next
+
+    ; drawing horizontal lines
+    For i = 1 To cellCount
+        Local xPos1 = cellSize
+        Local xPos2 = boardSize - cellSize
+        Local yPos = i*cellSize + topOffset
+        Line(xPos1, yPos, xPos2, yPos)
+    Next
+
+    ; draw stones
+    For col = 0 To game.board.width-1
+        For row = 0 To game.board.height-1
+            Local playerStone = game.board:Get(col, row)
+            If playerStone <> #PLAYER_EMPTY
+                Local radius = cellSize / 2.5
+                Local centerPointX = (col+1)*cellSize - radius
+                Local centerPointY = (row+1)*cellSize + topOffset - radius
+
+                Local stoneCol
+                If playerStone = #PLAYER_WHITE
+                    stoneCol = #WHITE
+                Else
+                    stoneCol = #BLACK
+                EndIf
+
+                Circle(centerPointX, centerPointY, radius, stoneCol)
+            EndIf
+        Next
+    Next
+
+
+EndFunction
+
+Function Clicked(x, y)
+    Local clickedCol = Int((x - cellSize) / cellSize + 0.5)
+    Local clickedRow = Int(((y-topOffset) - cellSize) / cellSize + 0.5)
+
+    DebugPrint("Clicked: x: ", x, "y: ", y, "col: ", clickedCol, "row: ", clickedRow)
+
+    ; save player before taking the next turn
+    Local clickingPlayer = game:WhooseTurn()
+    game:TakeTurn(clickedCol, clickedRow)
+
+    If game.rules:IsWin(game.board, clickingPlayer) = True
+        statusText = gamePresenter:GetWinStatus(clickingPlayer)
+    Else
+        statusText = gamePresenter:GetPlayerStatus(game:WhooseTurn())
+    EndIf    
+
+EndFunction
+
+;;;
+
+;;; "main loop"
+
+statusText = gamePresenter:GetPlayerStatus(game:WhooseTurn())
+PaintGrid()
+
+Repeat
+    WaitLeftMouse
+
+    Clicked(MouseX() , MouseY())
+    PaintGrid()
+Forever
+
+;;;

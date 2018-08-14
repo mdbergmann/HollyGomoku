@@ -1,0 +1,49 @@
+@INCLUDE "Board.hws"
+
+Local Rules = {}
+
+Function Rules:New(o)
+    o = o Or { winLength = 5 }
+    SetMetaTable(o, self)
+    self.__index = self
+    Return(o)
+EndFunction
+
+Function Rules:IsWin(board, player)
+    If self:IsRowWin(board, player) Or self:IsColWin(board, player) Then Return(True)
+    Return(False)
+EndFunction
+
+Function Rules:IsRowWin(board, player)
+    Return(self:IsConsecutive(board, player, board.height, board.width, "row"))
+EndFunction
+
+Function Rules:IsColWin(board, player)
+    Return(self:IsConsecutive(board, player, board.width, board.height, "col"))
+EndFunction
+
+Function Rules:IsConsecutive(board, player, iMax, jMax, op$)
+    Local consecutiveStones = 0
+    For Local i = 0 To iMax-1
+        For Local j = 0 To jMax-1
+            Local playerStone
+            If op$ = "row"
+                playerStone = board:Get(j,i)
+                ;DebugPrint("Op: ", op$, ",col: ", j, ",row: ", i, ",playerStone: ", playerStone)
+            Else
+                playerStone = board:Get(i,j)
+                ;DebugPrint("Op: ", op$, ",col: ", i, ",row: ", j, ",playerStone: ", playerStone)
+            EndIf
+
+            If playerStone = player
+                consecutiveStones = consecutiveStones + 1
+                ;DebugPrint("Have consecutive: ", consecutiveStones)
+            Else
+                consecutiveStones = 0
+            EndIf
+
+            If consecutiveStones >= self.winLength Then Return(True)
+        Next
+    Next
+    Return(False)
+EndFunction

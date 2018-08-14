@@ -1,0 +1,21 @@
+@INCLUDE "GameData.hws"
+
+Local GamePresenter = {}
+
+Function GamePresenter:New(o)
+    o = o Or {
+        playerTurnNames = {[#PLAYER_WHITE] = "White's Turn", [#PLAYER_BLACK] = "Black's Turn"},
+        playerWinStatus = {[#PLAYER_WHITE] = "White Wins!", [#PLAYER_BLACK] = "Black Wins!"}
+    }
+    SetMetaTable(o, self)
+    self.__index = self
+    Return(o)
+EndFunction
+
+Function GamePresenter:GetPlayerStatus(player)
+    Return(self.playerTurnNames[player])
+EndFunction
+
+Function GamePresenter:GetWinStatus(player)
+    Return(self.playerWinStatus[player])
+EndFunction
