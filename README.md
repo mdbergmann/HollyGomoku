@@ -1,7 +1,7 @@
 # HollyGomoku
 Gomoku in Hollywood
 
-This is a remake in Hollywood: https://www.hollywood-mal.com
+This is a re-implementation for Hollywood: https://www.hollywood-mal.com
 
 Taken from the CleanCoders video series "Mobile App Case Study".
 
