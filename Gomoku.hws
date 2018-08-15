@@ -4,7 +4,7 @@
 @APPTITLE       "Gomoku"
 @APPVERSION     "$VER: 1.0 (12.8.2018)"
 @VERSION        1,0
-@DISPLAY { Title = "Gomoku", Width = 600, Height = 800, Color = #BLUE }
+@DISPLAY { Title = "HollyGomoku", Width = 600, Height = 800, Color = #BLUE }
 
 @INCLUDE "Game.hws"
 @INCLUDE "GamePresenter.hws"
@@ -19,7 +19,8 @@ Local cellCount = game.board.width + 1
 Local cellSize = boardSize / cellCount
 DebugPrint("CellSize: ", cellSize)
 
-Local statusText
+Local statusText = ""
+Local gameOver = False
 
 ; paint grid
 Function PaintGrid()
@@ -84,6 +85,7 @@ Function Clicked(x, y)
 
     If game.rules:IsWin(game.board, clickingPlayer) = True
         statusText = gamePresenter:GetWinStatus(clickingPlayer)
+        gameOver = True
     Else
         statusText = gamePresenter:GetPlayerStatus(game:WhooseTurn())
     EndIf    
@@ -100,8 +102,13 @@ PaintGrid()
 Repeat
     WaitLeftMouse
 
-    Clicked(MouseX() , MouseY())
-    PaintGrid()
+    ; when game is over we don't react to any input.
+    ; for a new game the app must be re-started
+    If gameOver = False
+        Clicked(MouseX() , MouseY())
+        PaintGrid()
+    EndIf
+
 Forever
 
 ;;;
